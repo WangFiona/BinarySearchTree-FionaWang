@@ -100,10 +100,12 @@ int main() {
       cout << "Enter a command (enter add, search, delete, print, or quit)" << endl;
     }
     else if(strcmp(command, "SEARCH") == false){
+      //Ask what number to fine
       cout << "What number do you want to find?" << endl;
       int searchNum;
       cin >> searchNum;
       int found = search(tree, searchNum);
+      //Search for the number
       if(found == searchNum)
 	cout << searchNum << " exists in the tree!" << endl;
       else
@@ -111,11 +113,13 @@ int main() {
       cout << "Enter a command (enter add, search, delete, print, or quit)" << endl;
     }
     else if(strcmp(command, "DELETE") == false){
+      //Ask what number to delete
       cout << "What number do you want to delete?" << endl;
       int deleteNum;
       cin >> deleteNum;
       int found = search(tree, deleteNum);
       int root = tree->getData();
+      //Check if the number exists in the tree
       if(found == deleteNum)
         tree = deleteOne(tree, deleteNum);
       else
@@ -124,6 +128,7 @@ int main() {
       cout << "Enter a command (enter add, search, delete, print, or quit)" << endl;
     }
     else if(strcmp(command, "PRINT") == false){
+      //Print the whole tree
       printTree(tree, 0);
       cout << "Enter a command (enter add, search, delete, print, or quit)" << endl;
     }
@@ -234,7 +239,7 @@ void add(BNode* tree, int data){
 //Function to print out the binary search tree
 void printTree(BNode* tree, int count) {
   //Check if there is anything in the tree
-  if(tree->getData() == -1 || !tree){
+  if(!tree || tree->getData() == -1){
     cout << "The tree is empty!" << endl;
     return;
   }
@@ -256,17 +261,22 @@ void printTree(BNode* tree, int count) {
 
 //Function to check if a certain number exists in the tree
 int search(BNode* tree, int searchNum) {
+  //If the number has been found or the tree is empty
   if(!tree || tree->getData() == searchNum){
     return tree->getData();
   }
 
+  //If the number is bigger, then traverse to the right
   if(tree->getData() < searchNum){
+    //If you are at the bottom of the tree
     if(!tree->getRight())
       return tree->getData();
     return search(tree->getRight(), searchNum);
   }
 
+  //If the number is smaller, then traverse to the left
   else {
+    //If you are at the bottom of the tree
     if(!tree->getLeft())
       return tree->getData();
     return search(tree->getLeft(), searchNum);
@@ -275,22 +285,27 @@ int search(BNode* tree, int searchNum) {
 
 //Function to delete a specific node in the tree
 BNode* deleteOne(BNode* tree, int deleteNum){
+  //If the tree is empty
   if(!tree){
     return tree;
   }
+  //If the number is bigger, traverse to the right node
   if(tree->getData() < deleteNum){
     tree->setRight(deleteOne(tree->getRight(), deleteNum));
   }
+  //If the number is smaller, traverse to the left node
   else if(tree->getData() > deleteNum){
     tree->setLeft(deleteOne(tree->getLeft(), deleteNum));
   }
 
+  //If the correct node is found
   else if(tree->getData() == deleteNum){
+    //If it has no children nodes
     if(!tree->getLeft() && !tree->getRight()){
-      cout << "null" << endl;
       return NULL;
     }
-    
+
+    //If it has one child node (left or right)
     else if(!tree->getLeft()){
       BNode* temp = tree->getRight();
       delete tree;
@@ -302,6 +317,7 @@ BNode* deleteOne(BNode* tree, int deleteNum){
       return temp;
     }
 
+    //If it has two children
     BNode* temp = nextValue(tree->getRight());
     tree->setData(temp->getData());
     tree->setRight(deleteOne(tree->getRight(), temp->getData()));
