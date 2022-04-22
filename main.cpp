@@ -56,7 +56,9 @@ void addFile(BNode* &tree);
 void add(BNode* tree, int data);
 void printTree(BNode* tree, int count);
 int search(BNode* tree, int searchNum);
-void deleteOne(BNode* tree, BNode* previous, int deleteNum, int root);
+//void deleteOne(BNode* tree, BNode* previous, int deleteNum, int root);
+BNode* deleteOne(BNode* tree, int deleteNum);
+BNode* nextValue(BNode* tree);
 
 int main() {
   //Initializing variables
@@ -115,7 +117,7 @@ int main() {
       int found = search(tree, deleteNum);
       int root = tree->getData();
       if(found == deleteNum)
-        deleteOne(tree, tree, deleteNum, root);
+        tree = deleteOne(tree, deleteNum);
       else
         cout << deleteNum << " does not exist in the tree!" << endl;
 
@@ -232,7 +234,7 @@ void add(BNode* tree, int data){
 //Function to print out the binary search tree
 void printTree(BNode* tree, int count) {
   //Check if there is anything in the tree
-  if(tree->getData() == -1){
+  if(tree->getData() == -1 || !tree){
     cout << "The tree is empty!" << endl;
     return;
   }
@@ -272,36 +274,47 @@ int search(BNode* tree, int searchNum) {
 }
 
 //Function to delete a specific node in the tree
-void deleteOne(BNode* tree, BNode* previous, int deleteNum, int root){
-  if(deleteNum == root){
-    
-  }
-  if(tree->getData() == deleteNum){
-    if(!tree->getRight() || !tree->getLeft()) {
-      if(tree->getData() < deleteNum){
-	tree->setData(tree->getRight()->getData());
-	tree->setRight(NULL);
-      }
-      else{
-	tree->setData(tree->getLeft()->getData());
-        tree->setLeft(NULL);
-      }
-      return;
-    }
-    else if(tree->getRight() && tree->getLeft()){
-      
-    }
+BNode* deleteOne(BNode* tree, int deleteNum){
+  if(!tree){
+    return tree;
   }
   if(tree->getData() < deleteNum){
-    deleteOne(tree->getRight(), tree, deleteNum, root);
+    tree->setRight(deleteOne(tree->getRight(), deleteNum));
   }
-  else{
-    deleteOne(tree->getLeft(), tree, deleteNum, root);
+  else if(tree->getData() > deleteNum){
+    tree->setLeft(deleteOne(tree->getLeft(), deleteNum));
   }
-  /*else if(!tree->getRight() || !tree->getLeft()) {
-    if(tree->getData
-  }
-  else if(tree->getRight() && tree->getLeft()){
+
+  else if(tree->getData() == deleteNum){
+    if(!tree->getLeft() && !tree->getRight()){
+      cout << "null" << endl;
+      return NULL;
+    }
     
-  }*/
+    else if(!tree->getLeft()){
+      BNode* temp = tree->getRight();
+      delete tree;
+      return temp;
+    }
+    else if(!tree->getRight()){
+      BNode* temp = tree->getLeft();
+      delete tree;
+      return temp;
+    }
+
+    BNode* temp = nextValue(tree->getRight());
+    tree->setData(temp->getData());
+    tree->setRight(deleteOne(tree->getRight(), temp->getData()));
+  }
+  return tree;
+}
+
+//Function to fine the next smallest number in the tree
+BNode* nextValue(BNode* tree){
+  BNode* current = tree;
+  //Traverse to the bottom of the tree
+  while(current && current->getLeft()){
+    current = current->getLeft();
+  }
+  return current;
 }
