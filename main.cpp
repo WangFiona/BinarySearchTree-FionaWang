@@ -59,6 +59,7 @@ int search(BNode* tree, int searchNum);
 //void deleteOne(BNode* tree, BNode* previous, int deleteNum, int root);
 BNode* deleteOne(BNode* tree, int deleteNum);
 BNode* nextValue(BNode* tree);
+int leafCount(BNode* node);
 
 int main() {
   //Initializing variables
@@ -96,6 +97,8 @@ int main() {
       else{
 	cout << "Not a valid file type" << endl;
       }
+
+      cout << " Leaf Count: " << leafCount(tree) << endl;
 
       cout << "Enter a command (enter add, search, delete, print, or quit)" << endl;
     }
@@ -141,6 +144,15 @@ int main() {
   }
 
   return 0;
+}
+
+int leafCount(BNode* node){
+  if(!node)
+    return 0;
+  else if(!node->getLeft() && !node->getRight())
+    return 1;
+  else
+    return leafCount(node->getLeft()) + leafCount(node->getRight());
 }
 
 //Function to take an input from a file
